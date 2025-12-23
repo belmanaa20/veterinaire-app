@@ -1,0 +1,55 @@
+name: veterinaire_app
+description: Application de Gestion Vétérinaire - Flutter & Supabase
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # Backend
+  supabase_flutter: ^2.3.0
+  
+  # State Management
+  provider: ^6.1.1
+  
+  # UI
+  google_fonts: ^6.1.0
+  flutter_svg: ^2.0.9
+  
+  # Barcode
+  mobile_scanner: ^5.0.0
+  barcode_widget: ^2.0.4
+  
+  # PDF
+  pdf: ^3.10.7
+  printing: ^5.11.1
+  
+  # Utils
+  intl: ^0.18.1
+  uuid: ^4.2.2
+  path_provider: ^2.1.1
+  shared_preferences: ^2.2.2
+  
+  # Offline Cache
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  
+  # Connectivity
+  connectivity_plus: ^6.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  
+  # Uncomment if adding assets
+  # assets:
+  #   - assets/images/
+  #   - assets/icons/
