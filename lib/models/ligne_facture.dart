@@ -30,11 +30,15 @@ class LigneFacture {
       id: json['id'] as int,
       factureId: json['facture_id'] as int,
       produitId: json['produit_id'] as int,
-      quantite: (json['quantite'] as num).toDouble(),
-      prixUnitaire: (json['prix_unitaire'] as num).toDouble(),
-      montant: (json['montant'] as num).toDouble(),
-      dateAjout: DateTime.parse(json['date_ajout'] as String),
-      createdAt: DateTime.parse(json['created_at'] as String),
+      quantite: ((json['quantite'] as num?) ?? 0).toDouble(),
+      prixUnitaire: ((json['prix_unitaire'] as num?) ?? 0).toDouble(),
+      montant: ((json['montant'] as num?) ?? 0).toDouble(),
+      dateAjout: json['date_ajout'] != null
+          ? DateTime.parse(json['date_ajout'] as String)
+          : DateTime.now(),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
       produitCode: json['produit_code'] as String?,
       produitDesignation: json['produit_designation'] as String?,
     );

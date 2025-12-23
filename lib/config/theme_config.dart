@@ -2,11 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ThemeConfig {
-  // Color Palette
-  static const Color primaryColor = Color(0xFF0D47A1); // Blue 900
-  static const Color accentColor = Color(0xFF43A047); // Green 600
+  // Professional Veterinary Color Palette
+  static const Color primaryColor = Color(0xFF2E7D32); // Veterinary Green
+  static const Color secondaryColor = Color(0xFF1976D2); // Trust Blue
+  static const Color accentColor = Color(0xFFF57C00); // Warm Orange
+  static const Color successColor = Color(0xFF388E3C); // Success Green
+  static const Color warningColor = Color(0xFFF9A825); // Warning Yellow
+  static const Color errorColor = Color(0xFFD32F2F); // Error Red
   static const Color backgroundLight = Color(0xFFFAFAFA); // Grey 50
   static const Color backgroundDark = Color(0xFF212121); // Grey 900
+  static const Color surfaceLight = Color(0xFFFFFFFF); // White
+  static const Color textPrimary = Color(0xFF212121); // Almost Black
+  static const Color textSecondary = Color(0xFF757575); // Grey
   
   // Light Theme
   static ThemeData get lightTheme {
@@ -17,10 +24,15 @@ class ThemeConfig {
       scaffoldBackgroundColor: backgroundLight,
       colorScheme: ColorScheme.light(
         primary: primaryColor,
-        secondary: accentColor,
-        surface: Colors.white,
+        secondary: secondaryColor,
+        tertiary: accentColor,
+        surface: surfaceLight,
         background: backgroundLight,
-        error: Colors.red.shade700,
+        error: errorColor,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: textPrimary,
+        onBackground: textPrimary,
       ),
       
       // AppBar Theme
@@ -28,7 +40,7 @@ class ThemeConfig {
         backgroundColor: primaryColor,
         foregroundColor: Colors.white,
         elevation: 2,
-        centerTitle: true,
+        centerTitle: false,
         titleTextStyle: GoogleFonts.roboto(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -39,10 +51,11 @@ class ThemeConfig {
       // Card Theme
       cardTheme: CardTheme(
         elevation: 2,
+        color: surfaceLight,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: const EdgeInsets.all(8),
       ),
       
       // Text Theme
@@ -50,35 +63,39 @@ class ThemeConfig {
         displayLarge: GoogleFonts.roboto(
           fontSize: 32,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: textPrimary,
         ),
         displayMedium: GoogleFonts.roboto(
           fontSize: 28,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: textPrimary,
         ),
         displaySmall: GoogleFonts.roboto(
           fontSize: 24,
           fontWeight: FontWeight.bold,
-          color: Colors.black87,
+          color: textPrimary,
         ),
         headlineMedium: GoogleFonts.roboto(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: Colors.black87,
+          color: textPrimary,
         ),
         titleLarge: GoogleFonts.roboto(
           fontSize: 18,
           fontWeight: FontWeight.w600,
-          color: Colors.black87,
+          color: textPrimary,
         ),
         bodyLarge: GoogleFonts.roboto(
           fontSize: 16,
-          color: Colors.black87,
+          color: textPrimary,
         ),
         bodyMedium: GoogleFonts.roboto(
           fontSize: 14,
-          color: Colors.black87,
+          color: textPrimary,
+        ),
+        bodySmall: GoogleFonts.roboto(
+          fontSize: 12,
+          color: textSecondary,
         ),
         labelLarge: GoogleFonts.roboto(
           fontSize: 14,
@@ -92,7 +109,8 @@ class ThemeConfig {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          minimumSize: const Size(140, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -100,10 +118,35 @@ class ThemeConfig {
         ),
       ),
       
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(140, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primaryColor,
+          minimumSize: const Size(140, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          side: const BorderSide(color: primaryColor, width: 1.5),
+        ),
+      ),
+      
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: Colors.grey.shade100,
+        fillColor: Colors.grey.shade50,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey.shade300),
@@ -116,7 +159,32 @@ class ThemeConfig {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: errorColor, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: errorColor, width: 2),
+        ),
+      ),
+      
+      // Data Table Theme
+      dataTableTheme: DataTableThemeData(
+        headingRowColor: MaterialStateProperty.all(primaryColor.withOpacity(0.1)),
+        headingTextStyle: GoogleFonts.roboto(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: textPrimary,
+        ),
+        dataTextStyle: GoogleFonts.roboto(
+          fontSize: 14,
+          color: textPrimary,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade300),
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
     );
   }
@@ -130,10 +198,15 @@ class ThemeConfig {
       scaffoldBackgroundColor: backgroundDark,
       colorScheme: ColorScheme.dark(
         primary: primaryColor,
-        secondary: accentColor,
+        secondary: secondaryColor,
+        tertiary: accentColor,
         surface: Colors.grey.shade800,
         background: backgroundDark,
         error: Colors.red.shade400,
+        onPrimary: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: Colors.white,
+        onBackground: Colors.white,
       ),
       
       // AppBar Theme
@@ -141,7 +214,7 @@ class ThemeConfig {
         backgroundColor: Colors.grey.shade900,
         foregroundColor: Colors.white,
         elevation: 2,
-        centerTitle: true,
+        centerTitle: false,
         titleTextStyle: GoogleFonts.roboto(
           fontSize: 20,
           fontWeight: FontWeight.bold,
@@ -156,7 +229,7 @@ class ThemeConfig {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+        margin: const EdgeInsets.all(8),
       ),
       
       // Text Theme
@@ -194,6 +267,10 @@ class ThemeConfig {
           fontSize: 14,
           color: Colors.white70,
         ),
+        bodySmall: GoogleFonts.roboto(
+          fontSize: 12,
+          color: Colors.white60,
+        ),
         labelLarge: GoogleFonts.roboto(
           fontSize: 14,
           fontWeight: FontWeight.w500,
@@ -206,7 +283,8 @@ class ThemeConfig {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          minimumSize: const Size(140, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(8),
           ),
@@ -214,10 +292,35 @@ class ThemeConfig {
         ),
       ),
       
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          minimumSize: const Size(140, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: primaryColor,
+          minimumSize: const Size(140, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          side: const BorderSide(color: primaryColor, width: 1.5),
+        ),
+      ),
+      
       // Input Decoration Theme
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: Colors.grey.shade800,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
           borderSide: BorderSide(color: Colors.grey.shade700),
@@ -230,53 +333,54 @@ class ThemeConfig {
           borderRadius: BorderRadius.circular(8),
           borderSide: const BorderSide(color: primaryColor, width: 2),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: Colors.red.shade400, width: 2),
+        ),
+      ),
+      
+      // Data Table Theme
+      dataTableTheme: DataTableThemeData(
+        headingRowColor: MaterialStateProperty.all(primaryColor.withOpacity(0.2)),
+        headingTextStyle: GoogleFonts.roboto(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          color: Colors.white,
+        ),
+        dataTextStyle: GoogleFonts.roboto(
+          fontSize: 14,
+          color: Colors.white70,
+        ),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey.shade700),
+          borderRadius: BorderRadius.circular(8),
+        ),
       ),
     );
   }
   
-  // Arabic Text Theme (for i18n support)
-  static TextTheme getArabicTextTheme(Brightness brightness) {
-    final color = brightness == Brightness.light ? Colors.black87 : Colors.white;
-    return TextTheme(
-      displayLarge: GoogleFonts.cairo(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: color,
-      ),
-      displayMedium: GoogleFonts.cairo(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: color,
-      ),
-      displaySmall: GoogleFonts.cairo(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: color,
-      ),
-      headlineMedium: GoogleFonts.cairo(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: color,
-      ),
-      titleLarge: GoogleFonts.cairo(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: color,
-      ),
-      bodyLarge: GoogleFonts.cairo(
-        fontSize: 16,
-        color: brightness == Brightness.light ? Colors.black87 : Colors.white70,
-      ),
-      bodyMedium: GoogleFonts.cairo(
-        fontSize: 14,
-        color: brightness == Brightness.light ? Colors.black87 : Colors.white70,
-      ),
-      labelLarge: GoogleFonts.cairo(
-        fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Colors.white,
-      ),
-    );
+  // Helper methods for status colors
+  static Color getStockStatusColor(double stock, double stockMin) {
+    if (stock < 10) return errorColor;
+    if (stock <= 20) return warningColor;
+    return successColor;
+  }
+  
+  static Color getInvoiceStatusColor(String status) {
+    switch (status.toUpperCase()) {
+      case 'PAYEE':
+        return successColor;
+      case 'EN_RETARD':
+        return errorColor;
+      case 'FERMEE':
+        return warningColor;
+      case 'OUVERTE':
+      default:
+        return secondaryColor;
+    }
   }
 }

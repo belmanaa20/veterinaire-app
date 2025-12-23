@@ -31,15 +31,18 @@ class Produit {
   factory Produit.fromJson(Map<String, dynamic> json) {
     return Produit(
       id: json['id'] as int,
-      code: json['code'] as String,
-      barcode: json['barcode'] as String,
-      designation: json['designation'] as String,
-      prixUnitaire: (json['prix_unitaire'] as num).toDouble(),
-      stock: (json['stock'] as num).toDouble(),
-      stockMin: (json['stock_min'] as num).toDouble(),
+      code: (json['code'] as String?) ?? '',
+      // Handle both 'barcode' and 'code_barre' columns for database compatibility
+      barcode: (json['barcode'] as String?) ?? (json['code_barre'] as String?) ?? '',
+      designation: (json['designation'] as String?) ?? '',
+      prixUnitaire: ((json['prix_unitaire'] as num?) ?? 0).toDouble(),
+      stock: ((json['stock'] as num?) ?? 0).toDouble(),
+      stockMin: ((json['stock_min'] as num?) ?? 0).toDouble(),
       categorie: json['categorie'] as String?,
       unite: json['unite'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null 
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
       updatedAt: json['updated_at'] != null 
           ? DateTime.parse(json['updated_at'] as String)
           : null,
