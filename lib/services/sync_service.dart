@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import '../config/app_constants.dart';
 import 'cache_service.dart';
 import 'connectivity_service.dart';
 import 'supabase_service.dart';
@@ -81,12 +82,12 @@ class SyncService {
     if (!await ConnectivityService.isOnline()) return;
     
     try {
-      final date90DaysAgo = DateTime.now().subtract(const Duration(days: 90));
+      final dateNDaysAgo = DateTime.now().subtract(Duration(days: AppConstants.cacheFacturesDays));
       
       final response = await _supabase
           .from('v_factures_complet')
           .select()
-          .gte('date_facture', date90DaysAgo.toIso8601String())
+          .gte('date_facture', dateNDaysAgo.toIso8601String())
           .order('date_facture', ascending: false);
       
       await CacheService.saveList('factures', 'recent', List<Map<String, dynamic>>.from(response));
@@ -139,11 +140,11 @@ class SyncService {
         // Incrémenter le compteur de tentatives
         item['attempts'] = (item['attempts'] ?? 0) + 1;
         
-        // Si moins de 5 tentatives, garder dans la queue
-        if (item['attempts'] < 5) {
+        // Si moins de maxSyncRetries tentatives, garder dans la queue
+        if (item['attempts'] < AppConstants.maxSyncRetries) {
           remainingQueue.add(item);
         } else {
-          print('⚠️ Item abandonné après 5 tentatives');
+          print('⚠️ Item abandonné après ${AppConstants.maxSyncRetries} tentatives');
         }
       }
     }

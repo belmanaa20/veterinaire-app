@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import '../config/app_constants.dart';
 
 class ConnectivityService {
   static final Connectivity _connectivity = Connectivity();
@@ -19,12 +20,23 @@ class ConnectivityService {
         return false;
       }
       
-      // Vérifier la connexion réelle (ping Google DNS)
-      final result = await InternetAddress.lookup('google.com').timeout(
-        const Duration(seconds: 5),
-      );
+      // Vérifier la connexion réelle (ping avec fallback hosts)
+      for (final host in AppConstants.connectivityPingHosts) {
+        try {
+          final result = await InternetAddress.lookup(host).timeout(
+            const Duration(seconds: 5),
+          );
+          
+          if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            return true;
+          }
+        } catch (e) {
+          // Try next host
+          continue;
+        }
+      }
       
-      return result.isNotEmpty && result[0].rawAddress.isNotEmpty;
+      return false;
       
     } catch (e) {
       return false;

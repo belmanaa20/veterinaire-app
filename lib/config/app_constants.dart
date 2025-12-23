@@ -13,6 +13,15 @@ class AppConstants {
   static const String statutPayee = 'PAYEE';
   static const String statutEnRetard = 'EN_RETARD';
   
+  // Offline Mode & Sync
+  static const int maxSyncRetries = 5;
+  static const int cacheFacturesDays = 90;
+  static const List<String> connectivityPingHosts = [
+    'google.com',
+    'cloudflare.com',
+    '1.1.1.1',
+  ];
+  
   // Culture Types (Client types)
   static const List<String> cultureTypes = [
     'Elevage Bovin',
