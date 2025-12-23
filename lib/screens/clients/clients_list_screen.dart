@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../models/client.dart';
 import '../../services/client_service.dart';
+import '../../services/sync_service.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
+import '../../widgets/connection_status_widget.dart';
 import 'client_form_screen.dart';
 import 'client_details_screen.dart';
 
@@ -107,6 +109,21 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
       appBar: CustomAppBar(
         title: 'Clients',
         actions: [
+          // Bouton refresh manuel
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              final syncService = SyncService();
+              await syncService.syncAll();
+              await _loadClients();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('✅ Synchronisé!')),
+                );
+              }
+            },
+          ),
           IconButton(
             icon: const Icon(Icons.add),
             onPressed: () async {
@@ -120,6 +137,11 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 _loadClients();
               }
             },
+          ),
+          // Indicateur de connexion
+          const Padding(
+            padding: EdgeInsets.only(right: 16, left: 8),
+            child: ConnectionStatusWidget(),
           ),
         ],
       ),

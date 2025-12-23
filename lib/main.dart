@@ -1,14 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'config/theme_config.dart';
 import 'services/supabase_service.dart';
+import 'services/sync_service.dart';
 import 'screens/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
+  // ✅ Initialiser Hive AVANT Supabase
+  await Hive.initFlutter();
+  
+  // Ouvrir les boxes
+  await Hive.openBox('clients');
+  await Hive.openBox('produits');
+  await Hive.openBox('factures');
+  await Hive.openBox('parametres');
+  await Hive.openBox('sync_queue');
+  await Hive.openBox('app_settings');
+  
   // Initialize Supabase
   await SupabaseService.initialize();
+  
+  // Démarrer le service de synchronisation
+  final syncService = SyncService();
+  syncService.startListeningToConnectivity();
   
   runApp(const VeterinaireApp());
 }

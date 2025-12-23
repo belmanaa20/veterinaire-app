@@ -4,6 +4,9 @@ import '../config/app_constants.dart';
 import '../models/facture.dart';
 import '../models/ligne_facture.dart';
 import 'supabase_service.dart';
+import 'cache_service.dart';
+import 'connectivity_service.dart';
+import 'sync_service.dart';
 
 class FactureService {
   final SupabaseClient _supabase = SupabaseService.client;
@@ -113,17 +116,41 @@ class FactureService {
     }
   }
 
-  /// Get all factures with complete information from view
-  Future<List<Facture>> getFacturesComplet() async {
+  /// Get all factures with complete information from view (Hive first, then Supabase)
+  Future<List<Facture>> getFacturesComplet({bool forceRefresh = false}) async {
     try {
-      final response = await _supabase
-          .from(SupabaseConfig.viewFacturesComplet)
-          .select()
-          .order('date_facture', ascending: false);
+      // 1. Essayer Hive (rapide)
+      if (!forceRefresh) {
+        final cachedData = CacheService.getList('factures', 'recent');
+        if (cachedData.isNotEmpty) {
+          print('💾 Factures from Hive cache (${cachedData.length} items)');
+          return cachedData.map((e) => Facture.fromJson(e)).toList();
+        }
+      }
       
-      return (response as List)
-          .map((e) => Facture.fromJson(e as Map<String, dynamic>))
-          .toList();
+      // 2. Si Online, récupérer de Supabase
+      if (await ConnectivityService.isOnline()) {
+        try {
+          final response = await _supabase
+              .from(SupabaseConfig.viewFacturesComplet)
+              .select()
+              .order('date_facture', ascending: false);
+          
+          // Sauvegarder dans Hive
+          await CacheService.saveList('factures', 'recent', List<Map<String, dynamic>>.from(response));
+          
+          print('✅ Factures from Supabase + cached');
+          return (response as List)
+              .map((e) => Facture.fromJson(e as Map<String, dynamic>))
+              .toList();
+        } catch (e) {
+          print('⚠️ Supabase error, using cache: $e');
+        }
+      }
+      
+      // 3. Fallback: Hive
+      final cachedData = CacheService.getList('factures', 'recent');
+      return cachedData.map((e) => Facture.fromJson(e)).toList();
     } catch (e) {
       print('Error getting factures complet: $e');
       rethrow;

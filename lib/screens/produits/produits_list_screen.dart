@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../models/produit.dart';
 import '../../services/produit_service.dart';
 import '../../services/label_service.dart';
+import '../../services/sync_service.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/produit_card.dart';
+import '../../widgets/connection_status_widget.dart';
 import 'produit_form_screen.dart';
 import 'print_labels_screen.dart';
 
@@ -155,6 +157,20 @@ class _ProduitsListScreenState extends State<ProduitsListScreen> {
         title: 'Produits',
         actions: [
           IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              final syncService = SyncService();
+              await syncService.syncAll();
+              await _loadProduits();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('✅ Synchronisé!')),
+                );
+              }
+            },
+          ),
+          IconButton(
             icon: Icon(
               _showStockFaibleOnly ? Icons.filter_alt : Icons.filter_alt_outlined,
               color: _showStockFaibleOnly ? Colors.red : null,
@@ -187,6 +203,10 @@ class _ProduitsListScreenState extends State<ProduitsListScreen> {
                 _loadProduits();
               }
             },
+          ),
+          const Padding(
+            padding: EdgeInsets.only(right: 16, left: 8),
+            child: ConnectionStatusWidget(),
           ),
         ],
       ),

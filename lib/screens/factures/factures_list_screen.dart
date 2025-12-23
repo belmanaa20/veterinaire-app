@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import '../../models/facture.dart';
 import '../../services/facture_service.dart';
 import '../../services/pdf_service.dart';
+import '../../services/sync_service.dart';
 import '../../config/app_constants.dart';
 import '../../widgets/custom_app_bar.dart';
 import '../../widgets/facture_card.dart';
+import '../../widgets/connection_status_widget.dart';
 import 'nouvelle_facture_screen.dart';
 import 'facture_details_screen.dart';
 
@@ -125,7 +127,21 @@ class _FacturesListScreenState extends State<FacturesListScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
-            onPressed: _loadFactures,
+            onPressed: () async {
+              final syncService = SyncService();
+              await syncService.syncAll();
+              await _loadFactures();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('✅ Synchronisé!')),
+                );
+              }
+            },
+          ),
+          const Padding(
+            padding: EdgeInsets.only(right: 16, left: 8),
+            child: ConnectionStatusWidget(),
           ),
         ],
       ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../config/app_constants.dart';
 import '../widgets/custom_app_bar.dart';
+import '../widgets/connection_status_widget.dart';
+import '../services/sync_service.dart';
 import 'clients/clients_list_screen.dart';
 import 'produits/produits_list_screen.dart';
 import 'factures/factures_list_screen.dart';
@@ -29,6 +31,20 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: CustomAppBar(
         title: AppConstants.appName,
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: () async {
+              final syncService = SyncService();
+              await syncService.syncAll();
+              
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('✅ Synchronisé!')),
+                );
+              }
+            },
+            tooltip: 'Synchroniser',
+          ),
           IconButton(
             icon: const Icon(Icons.notifications),
             onPressed: () {
@@ -65,6 +81,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ],
+          ),
+          const Padding(
+            padding: EdgeInsets.only(right: 16, left: 8),
+            child: ConnectionStatusWidget(),
           ),
         ],
       ),
