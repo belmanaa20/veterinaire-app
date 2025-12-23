@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../config/theme_config.dart';
+import '../utils/connectivity_monitor.dart';
 
-class DesktopSidebar extends StatelessWidget {
+class DesktopSidebar extends StatefulWidget {
   final int selectedIndex;
   final ValueChanged<int> onDestinationSelected;
 
@@ -10,6 +11,29 @@ class DesktopSidebar extends StatelessWidget {
     required this.selectedIndex,
     required this.onDestinationSelected,
   });
+
+  @override
+  State<DesktopSidebar> createState() => _DesktopSidebarState();
+}
+
+class _DesktopSidebarState extends State<DesktopSidebar> {
+  final _connectivityMonitor = ConnectivityMonitor();
+  bool _isOnline = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _isOnline = _connectivityMonitor.isOnline;
+    
+    // Listen to connectivity changes
+    _connectivityMonitor.onlineStream.listen((isOnline) {
+      if (mounted) {
+        setState(() {
+          _isOnline = isOnline;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -120,26 +144,38 @@ class DesktopSidebar extends StatelessWidget {
             ),
           ),
           
-          // Footer
+          // Footer with connectivity status
           Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
               children: [
                 const Divider(),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.circle,
-                      size: 8,
-                      color: ThemeConfig.successColor,
-                    ),
-                    const SizedBox(width: 8),
-                    const Text(
-                      'En ligne',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                  ],
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: (_isOnline ? ThemeConfig.successColor : ThemeConfig.errorColor)
+                        .withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        _isOnline ? Icons.cloud_done : Icons.cloud_off,
+                        size: 16,
+                        color: _isOnline ? ThemeConfig.successColor : ThemeConfig.errorColor,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        _isOnline ? 'En ligne' : 'Hors ligne',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: _isOnline ? ThemeConfig.successColor : ThemeConfig.errorColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -156,7 +192,7 @@ class DesktopSidebar extends StatelessWidget {
     required int index,
     bool isSecondary = false,
   }) {
-    final isSelected = selectedIndex == index;
+    final isSelected = widget.selectedIndex == index;
     final theme = Theme.of(context);
     
     return Padding(
@@ -164,7 +200,7 @@ class DesktopSidebar extends StatelessWidget {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
-          onTap: () => onDestinationSelected(index),
+          onTap: () => widget.onDestinationSelected(index),
           borderRadius: BorderRadius.circular(8),
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
