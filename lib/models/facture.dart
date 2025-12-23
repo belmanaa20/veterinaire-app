@@ -52,17 +52,23 @@ class Facture {
   factory Facture.fromJson(Map<String, dynamic> json) {
     return Facture(
       id: json['id'] as int,
-      numero: json['numero'] as String,
+      numero: (json['numero'] as String?) ?? '',
       clientId: json['client_id'] as int,
-      dateFacture: DateTime.parse(json['date_facture'] as String),
-      dateEcheance: DateTime.parse(json['date_echeance'] as String),
+      dateFacture: json['date_facture'] != null
+          ? DateTime.parse(json['date_facture'] as String)
+          : DateTime.now(),
+      dateEcheance: json['date_echeance'] != null
+          ? DateTime.parse(json['date_echeance'] as String)
+          : DateTime.now().add(const Duration(days: 45)),
       datePaiement: json['date_paiement'] != null
           ? DateTime.parse(json['date_paiement'] as String)
           : null,
-      montantTotal: (json['montant_total'] as num).toDouble(),
-      statut: json['statut'] as String,
+      montantTotal: ((json['montant_total'] as num?) ?? 0).toDouble(),
+      statut: (json['statut'] as String?) ?? 'OUVERTE',
       estModifiable: json['est_modifiable'] as bool? ?? false,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
       updatedAt: json['updated_at'] != null
           ? DateTime.parse(json['updated_at'] as String)
           : null,

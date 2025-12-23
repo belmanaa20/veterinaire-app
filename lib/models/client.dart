@@ -20,11 +20,13 @@ class Client {
   factory Client.fromJson(Map<String, dynamic> json) {
     return Client(
       id: json['id'] as int,
-      nom: json['nom'] as String,
+      nom: (json['nom'] as String?) ?? '',
       adresse: json['adresse'] as String?,
       telephone: json['telephone'] as String?,
       culture: json['culture'] as String?,
-      createdAt: DateTime.parse(json['created_at'] as String),
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'] as String)
+          : DateTime.now(),
       updatedAt: json['updated_at'] != null 
           ? DateTime.parse(json['updated_at'] as String)
           : null,
