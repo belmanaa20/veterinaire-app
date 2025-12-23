@@ -2,6 +2,18 @@
 
 Application complète de gestion pour pharmacie vétérinaire avec système de facturation sur 45 jours. Compatible Desktop (Windows, Linux, macOS) et Mobile (Android, iOS).
 
+## ✨ Nouveauté: Mode Offline avec Hive
+
+L'application fonctionne maintenant **complètement hors ligne** grâce au cache local Hive! 🚀
+
+- 🔌 **Fonctionne sans connexion internet**
+- 💾 **Cache automatique** de toutes les données
+- 🔄 **Synchronisation intelligente** (manuelle + automatique)
+- 📊 **Indicateur de statut** en temps réel (En ligne/Hors ligne)
+- 📱 **Queue de synchronisation** pour opérations offline
+
+👉 Voir [OFFLINE_MODE.md](./OFFLINE_MODE.md) pour la documentation complète
+
 ## 📋 Description
 
 Cette application permet de gérer efficacement une pharmacie vétérinaire avec les fonctionnalités suivantes:
@@ -13,6 +25,7 @@ Cette application permet de gérer efficacement une pharmacie vétérinaire avec
 - **Scanner de codes-barres**: Ajout rapide de produits via scan
 - **Alertes automatiques**: Notifications pour échéances et stock faible
 - **Interface moderne**: Support mode sombre et design responsive
+- **Mode Offline**: Fonctionne sans connexion internet avec synchronisation automatique
 
 ## 🗄️ Base de données Supabase
 
@@ -107,14 +120,18 @@ lib/
 │   ├── client.dart                   # Modèle client
 │   ├── produit.dart                  # Modèle produit
 │   ├── facture.dart                  # Modèle facture
-│   └── ligne_facture.dart            # Modèle ligne de facture
+│   ├── ligne_facture.dart            # Modèle ligne de facture
+│   └── sync_queue_item.dart          # ✨ Modèle queue de sync offline
 ├── services/
 │   ├── supabase_service.dart         # Initialisation Supabase
-│   ├── client_service.dart           # CRUD clients
-│   ├── produit_service.dart          # CRUD produits
-│   ├── facture_service.dart          # CRUD factures + RPC
+│   ├── client_service.dart           # CRUD clients + cache offline
+│   ├── produit_service.dart          # CRUD produits + cache offline
+│   ├── facture_service.dart          # CRUD factures + RPC + cache
 │   ├── pdf_service.dart              # Génération PDF A4
-│   └── label_service.dart            # Impression étiquettes
+│   ├── label_service.dart            # Impression étiquettes
+│   ├── cache_service.dart            # ✨ Service Hive (cache local)
+│   ├── connectivity_service.dart     # ✨ Détection Online/Offline
+│   └── sync_service.dart             # ✨ Synchronisation Hive ↔ Supabase
 ├── screens/
 │   ├── home_screen.dart              # Dashboard principal
 │   ├── clients/
@@ -134,7 +151,8 @@ lib/
     ├── custom_app_bar.dart
     ├── custom_button.dart
     ├── facture_card.dart
-    └── produit_card.dart
+    ├── produit_card.dart
+    └── connection_status_widget.dart # ✨ Indicateur Online/Offline
 ```
 
 ## 🎯 Fonctionnalités principales
@@ -216,15 +234,29 @@ Template professionnel incluant:
 
 ```yaml
 dependencies:
+  # Backend & Cache
   supabase_flutter: ^2.3.0      # Backend Supabase
+  hive: ^2.2.3                  # ✨ Cache local offline
+  hive_flutter: ^1.1.0          # ✨ Hive pour Flutter
+  connectivity_plus: ^6.0.5     # ✨ Détection réseau
+  
+  # State & UI
   provider: ^6.1.1              # State management
   google_fonts: ^6.1.0          # Fonts
+  
+  # Barcode & Scanning
   mobile_scanner: ^5.0.0        # Barcode scanner
   barcode_widget: ^2.0.4        # Barcode generation
+  
+  # PDF & Printing
   pdf: ^3.10.7                  # PDF generation
   printing: ^5.11.1             # Printing
+  
+  # Utils
   intl: ^0.18.1                 # Internationalization
   uuid: ^4.2.2                  # UUID generation
+  path_provider: ^2.1.1         # File paths
+  shared_preferences: ^2.2.2    # Preferences
 ```
 
 ## 🔧 Configuration
