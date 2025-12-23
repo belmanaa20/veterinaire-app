@@ -2,13 +2,33 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'config/theme_config.dart';
 import 'services/supabase_service.dart';
+import 'services/hive_service.dart';
+import 'services/sync_service.dart';
 import 'screens/home_screen.dart';
+import 'utils/connectivity_monitor.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize Supabase
-  await SupabaseService.initialize();
+  try {
+    // Initialize Hive for offline storage
+    await HiveService.initialize();
+    print('✅ Hive initialized');
+    
+    // Initialize Supabase
+    await SupabaseService.initialize();
+    print('✅ Supabase initialized');
+    
+    // Initialize connectivity monitor
+    await ConnectivityMonitor().start();
+    print('✅ Connectivity monitor started');
+    
+    // Initialize sync service
+    SyncService().initialize();
+    print('✅ Sync service initialized');
+  } catch (e) {
+    print('❌ Initialization error: $e');
+  }
   
   runApp(const VeterinaireApp());
 }
