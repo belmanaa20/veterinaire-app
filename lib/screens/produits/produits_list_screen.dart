@@ -4,6 +4,8 @@ import '../../config/theme_config.dart';
 import '../../providers/produit_provider.dart';
 import '../../widgets/common_widgets.dart';
 import '../../utils/formatters.dart';
+import '../../models/produit.dart';
+import 'produit_form_screen.dart';
 
 class ProduitsListScreen extends StatefulWidget {
   const ProduitsListScreen({super.key});
@@ -36,11 +38,7 @@ class _ProduitsListScreenState extends State<ProduitsListScreen> {
           ),
           const SizedBox(width: 8),
           ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fonctionnalité à implémenter')),
-              );
-            },
+            onPressed: () => _showProduitForm(context),
             icon: const Icon(Icons.add),
             label: const Text('Nouveau Produit'),
           ),
@@ -93,33 +91,46 @@ class _ProduitsListScreenState extends State<ProduitsListScreen> {
                         Text('Catégorie: ${produit.categorie}'),
                     ],
                   ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(
-                        Formatters.formatCurrency(produit.prixUnitaire),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 4,
-                        ),
-                        decoration: BoxDecoration(
-                          color: stockColor.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          produit.actif ? 'Actif' : 'Inactif',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: stockColor,
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            Formatters.formatCurrency(produit.prixUnitaire),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                            ),
                           ),
-                        ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: stockColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              produit.actif ? 'Actif' : 'Inactif',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: stockColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.edit),
+                        onPressed: () => _showProduitForm(context, produit: produit),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.red),
+                        onPressed: () => _deleteProduit(context, produit),
                       ),
                     ],
                   ),
@@ -130,5 +141,56 @@ class _ProduitsListScreenState extends State<ProduitsListScreen> {
         },
       ),
     );
+  }
+
+  void _showProduitForm(BuildContext context, {Produit? produit}) {
+    showDialog(
+      context: context,
+      builder: (context) => ProduitFormScreen(produit: produit),
+    );
+  }
+
+  Future<void> _deleteProduit(BuildContext context, Produit produit) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Confirmer la suppression'),
+        content: Text('Voulez-vous vraiment supprimer le produit ${produit.designation}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Annuler'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: const Text('Supprimer'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && context.mounted) {
+      try {
+        await context.read<ProduitProvider>().deleteProduit(produit.id!);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Produit supprimé avec succès'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } catch (e) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Erreur: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    }
   }
 }

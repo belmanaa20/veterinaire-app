@@ -5,6 +5,7 @@ import '../../providers/facture_provider.dart';
 import '../../widgets/common_widgets.dart';
 import '../../widgets/status_badge.dart';
 import '../../utils/formatters.dart';
+import 'facture_form_screen.dart';
 
 class FacturesListScreen extends StatefulWidget {
   const FacturesListScreen({super.key});
@@ -37,11 +38,7 @@ class _FacturesListScreenState extends State<FacturesListScreen> {
           ),
           const SizedBox(width: 8),
           ElevatedButton.icon(
-            onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Fonctionnalité à implémenter')),
-              );
-            },
+            onPressed: () => _showFactureForm(context),
             icon: const Icon(Icons.add),
             label: const Text('Nouvelle Facture'),
           ),
@@ -97,7 +94,19 @@ class _FacturesListScreenState extends State<FacturesListScreen> {
                       ),
                     ],
                   ),
-                  trailing: StatusBadge(statut: facture.statut),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      StatusBadge(statut: facture.statut),
+                      if (facture.isDraft) ...[
+                        const SizedBox(width: 8),
+                        IconButton(
+                          icon: const Icon(Icons.edit),
+                          onPressed: () => _showFactureForm(context, factureId: facture.id),
+                        ),
+                      ],
+                    ],
+                  ),
                 );
               },
             ),
@@ -105,5 +114,15 @@ class _FacturesListScreenState extends State<FacturesListScreen> {
         },
       ),
     );
+  }
+
+  void _showFactureForm(BuildContext context, {int? factureId}) {
+    showDialog(
+      context: context,
+      builder: (context) => FactureFormScreen(factureId: factureId),
+    ).then((_) {
+      // Reload invoices after dialog closes
+      context.read<FactureProvider>().loadFactures();
+    });
   }
 }
