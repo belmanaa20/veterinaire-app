@@ -108,13 +108,7 @@ class _FactureFormScreenState extends State<FactureFormScreen> {
                                             child: Text(client.fullName),
                                           ))
                                       .toList(),
-                                  onChanged: _currentFactureId == null
-                                      ? (value) {
-                                          setState(() {
-                                            _selectedClient = value;
-                                          });
-                                        }
-                                      : null,
+                                  onChanged: _handleClientChange,
                                   validator: (v) => v == null ? 'Sélectionnez un client' : null,
                                 );
                               },
@@ -491,5 +485,13 @@ class _FactureFormScreenState extends State<FactureFormScreen> {
     _prixController.dispose();
     _remiseController.dispose();
     super.dispose();
+  }
+
+  void _handleClientChange(Client? value) {
+    if (_currentFactureId == null) {
+      setState(() {
+        _selectedClient = value;
+      });
+    }
   }
 }

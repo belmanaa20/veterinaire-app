@@ -4,6 +4,7 @@ import '../../config/theme_config.dart';
 import '../../models/client.dart';
 import '../../providers/client_provider.dart';
 import '../../utils/validators.dart';
+import '../../utils/formatters.dart';
 import '../../utils/constants.dart';
 
 class ClientFormScreen extends StatefulWidget {
@@ -225,7 +226,7 @@ class _ClientFormScreenState extends State<ClientFormScreen> {
                                 ),
                                 child: Text(
                                   _dateNaissanceAnimal != null
-                                      ? '${_dateNaissanceAnimal!.day}/${_dateNaissanceAnimal!.month}/${_dateNaissanceAnimal!.year}'
+                                      ? Formatters.formatDate(_dateNaissanceAnimal!)
                                       : 'Sélectionner une date',
                                 ),
                               ),
